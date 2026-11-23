@@ -80,9 +80,15 @@ py -3 manage_admin.py remove rahul
 3. `render.yaml` settings auto-fill karega. Manually:
    - **Build Command:** `pip install -r requirements.txt`
    - **Start Command:** `python main.py`
-4. Environment variables: `BOT_TOKEN`, `ADMIN_IDS`, `ADMIN_USERNAME`, `ADMIN_PASSWORD`, `SECRET_KEY`.
-5. **Persistent disk** `/data` par mount hai aur DB `DB_PATH=/data/attendance.db` me likha jayega.
-   - ⚠️ Render par persistent disk **paid plan** par hi available hai. Free plan par restart ke baad DB data reset ho sakta hai. Production ke liye Starter plan use karein.
+4. Environment variables: `BOT_TOKEN`, `ADMIN_IDS`, `ADMIN_USERNAME`, `ADMIN_PASSWORD`, `SECRET_KEY`, `DATABASE_URL`.
+5. **Database — do options:**
+   - **Free plan (disk nahi):** [Neon](https://neon.tech) ya [Supabase](https://supabase.com) ka free PostgreSQL banaayein aur uska connection string `DATABASE_URL` me daalein:
+     ```
+     postgresql://user:password@host/dbname?sslmode=require
+     ```
+     App automatically PostgreSQL use karega aur data persist rahega.
+   - **Paid Starter plan:** persistent disk `/data` mount hoti hai aur DB `DB_PATH=/data/attendance.db` me likha jayega.
+   - ⚠️ `DATABASE_URL` khali aur disk nahi dono ho to app local SQLite par chalega, par **restart/deploy par data reset** ho jayega.
 6. Deploy ke baad:
    - Web admin: `https://<your-service>.onrender.com/login`
    - Telegram: bot ko `/start` karke test karein
@@ -100,7 +106,7 @@ Web app aur Telegram bot **ek hi process** me chalte hain (bot background thread
 | `templates/`, `static/` | admin panel UI |
 | `bot.py` | Telegram bot handlers registration |
 | `config.py` | `.env` se settings |
-| `database.py` | SQLite schema + queries |
+| `database.py` | SQLite / PostgreSQL schema + queries |
 | `handlers/employee.py` | registration + attendance flow |
 | `reports.py` | CSV / Excel report builders |
 | `notifier.py` | web se Telegram par message bhejna |

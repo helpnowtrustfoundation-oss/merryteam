@@ -16,6 +16,8 @@ services:
         sync: false
       - key: SECRET_KEY
         sync: false
+      - key: DATABASE_URL
+        sync: false
       - key: TIMEZONE
         value: Asia/Kolkata
       - key: DB_PATH

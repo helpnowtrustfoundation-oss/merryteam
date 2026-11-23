@@ -29,6 +29,10 @@ TIMEZONE: str = _raw_timezone
 _raw_db_path = os.getenv("DB_PATH", "attendance.db").strip().split("(")[0].strip()
 DB_PATH: Path = Path(_raw_db_path or "attendance.db")
 
+# External database (Render free par persistent storage ke liye Neon/Supabase PostgreSQL)
+DATABASE_URL: str = os.getenv("DATABASE_URL", "").strip()
+USE_POSTGRES: bool = DATABASE_URL.startswith(("postgres://", "postgresql://"))
+
 # Web admin login
 ADMIN_USERNAME: str = os.getenv("ADMIN_USERNAME", "admin").strip() or "admin"
 ADMIN_PASSWORD: str = os.getenv("ADMIN_PASSWORD", "").strip()

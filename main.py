@@ -9,8 +9,8 @@ from telegram import Update
 
 import notifier
 from bot import build_app
-from config import BOT_TOKEN, PORT
-from database import init_db
+from config import BOT_TOKEN, PORT, USE_POSTGRES
+from database import ACTIVE_DB_PATH, init_db
 from webapp import app as web_app
 
 logging.basicConfig(
@@ -37,6 +37,9 @@ def run_bot() -> None:
 
 def main() -> None:
     init_db()
+    logger.info(
+        "Database: %s", "PostgreSQL (DATABASE_URL)" if USE_POSTGRES else ACTIVE_DB_PATH
+    )
 
     if BOT_TOKEN:
         threading.Thread(target=run_bot, name="telegram-bot", daemon=True).start()
