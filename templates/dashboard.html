@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — Merry Team{% endblock %}
+{% block heading %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="cards">
+  <div class="card green">
+    <div class="label">Present today</div>
+    <div class="value">{{ present|length }}</div>
+    <div class="hint">of {{ present|length + absent|length }} approved employees</div>
+  </div>
+  <div class="card red">
+    <div class="label">Absent today</div>
+    <div class="value">{{ absent|length }}</div>
+    <div class="hint">abhi tak check-in nahi kiya</div>
+  </div>
+  <div class="card amber">
+    <div class="label">Late check-ins</div>
+    <div class="value">{{ late_count }}</div>
+    <div class="hint">cutoff {{ late_after if late_after is defined else '' }}</div>
+  </div>
+  <div class="card brand">
+    <div class="label">Pending approvals</div>
+    <div class="value">{{ pending_count }}</div>
+    <div class="hint"><a href="{{ url_for('pending') }}">review karein →</a></div>
+  </div>
+</div>
+
+<div class="panel">
+  <div class="panel-head">
+    <h2>🟢 Present — {{ date }}</h2>
+    <a class="btn btn-ghost btn-sm" href="{{ url_for('today_report') }}">Poori report</a>
+  </div>
+  {% if present %}
+  <div class="panel-body tight">
+    <table>
+      <thead><tr><th>Employee</th><th>ID</th><th>Check In</th><th>Check Out</th><th>Status</th></tr></thead>
+      <tbody>
+        {% for item in present %}
+        <tr>
+          <td><a href="{{ url_for('employee_detail', tid=item.user.telegram_id) }}"><strong>{{ item.user.name }}</strong></a></td>
+          <td class="mono">{{ item.user.employee_id }}</td>
+          <td>{{ hhmm_str(item.att.check_in) }}</td>
+          <td>{{ hhmm_str(item.att.check_out) if item.att.check_out else '—' }}</td>
+          <td>
+            {% if item.late %}<span class="badge warn">Late</span>{% else %}<span class="badge ok">On time</span>{% endif %}
+            {% if not item.att.check_out %}<span class="badge info">Andar</span>{% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty">Aaj abhi koi check-in nahi hua.</div>
+  {% endif %}
+</div>
+
+<div class="panel">
+  <div class="panel-head"><h2>🔴 Absent — {{ date }}</h2></div>
+  <div class="panel-body">
+    {% if absent %}
+      <div class="chips">
+        {% for user in absent %}
+          <a class="chip" href="{{ url_for('employee_detail', tid=user.telegram_id) }}">{{ user.name }} · {{ user.employee_id }}</a>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="note">Sab approved employees present hain. 🎉</div>
+    {% endif %}
+  </div>
+</div>
+
+<div class="panel">
+  <div class="panel-head"><h2>☕ Abhi chal rahe breaks</h2></div>
+  {% if active_breaks %}
+  <div class="panel-body tight">
+    <table>
+      <thead><tr><th>Employee</th><th>Break</th><th>Start</th></tr></thead>
+      <tbody>
+        {% for b in active_breaks %}
+        <tr><td>{{ b.name }}</td><td>{{ break_names.get(b.type, b.type) if break_names is defined else b.type }}</td><td>{{ hhmm_str(b.start_time) }}</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty">Koi break abhi chal nahi raha.</div>
+  {% endif %}
+</div>
+
+<div class="panel">
+  <div class="panel-head"><h2>🕒 Recent activity</h2></div>
+  <div class="panel-body tight">
+    <table>
+      <thead><tr><th>Date</th><th>Employee</th><th>In</th><th>Out</th><th>Work</th></tr></thead>
+      <tbody>
+        {% for row in recent %}
+        <tr>
+          <td class="small">{{ row.date }}</td>
+          <td>{{ row.name }}</td>
+          <td>{{ hhmm_str(row.check_in) }}</td>
+          <td>{{ hhmm_str(row.check_out) if row.check_out else '—' }}</td>
+          <td>{{ duration_str(row.work_seconds) }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

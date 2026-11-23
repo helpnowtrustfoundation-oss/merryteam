@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Settings — Merry Team{% endblock %}
+{% block heading %}Settings{% endblock %}
+
+{% block content %}
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:18px">
+
+  <div class="panel" style="margin:0">
+    <div class="panel-head"><h2>⚙️ Attendance settings</h2></div>
+    <div class="panel-body">
+      <form method="post">
+        <label style="display:block;font-size:12px;font-weight:600;margin-bottom:6px">Late check-in cutoff (24-hour HH:MM)</label>
+        <div class="btn-row">
+          <input type="text" name="late_after" value="{{ late_after }}" placeholder="09:30" required>
+          <button class="btn" type="submit">Save</button>
+        </div>
+      </form>
+      <div class="note" style="margin-top:14px">
+        Is time ke baad check-in karne wale employees <strong>Late</strong> mark hote hain.
+        Ye setting database me save rehti hai.
+      </div>
+    </div>
+  </div>
+
+  <div class="panel" style="margin:0">
+    <div class="panel-head"><h2>ℹ️ System info</h2></div>
+    <div class="panel-body">
+      <div class="note">
+        <strong>Timezone:</strong> {{ timezone_name }}<br>
+        <strong>Logged in as:</strong> {{ admin_user }}<br>
+        <strong>Admins:</strong> {{ admins|map(attribute='username')|join(', ') or 'none' }}
+      </div>
+      <hr style="border:0;border-top:1px solid var(--line);margin:16px 0">
+      <div class="note">
+        <strong>Naya admin banayein:</strong><br>
+        <code>py -3 manage_admin.py add username</code><br><br>
+        <strong>Admin list:</strong> <code>py -3 manage_admin.py list</code><br>
+        <strong>Hataayein:</strong> <code>py -3 manage_admin.py remove username</code>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

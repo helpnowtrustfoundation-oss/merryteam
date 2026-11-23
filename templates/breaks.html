@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Breaks — Merry Team{% endblock %}
+{% block heading %}Break report{% endblock %}
+
+{% block content %}
+<div class="panel">
+  <div class="panel-body">
+    <form class="filter" method="get">
+      <div>
+        <label for="date">Date</label>
+        <input id="date" type="date" name="date" value="{{ date }}">
+      </div>
+      <button class="btn" type="submit">Dekhein</button>
+      <a class="btn btn-ghost" href="{{ url_for('breaks_report') }}">Aaj</a>
+    </form>
+  </div>
+</div>
+
+<div class="panel">
+  <div class="panel-head"><h2>☕ Break totals — {{ date }}</h2></div>
+  {% if totals %}
+  <div class="panel-body tight">
+    <table>
+      <thead><tr><th>Employee</th><th>ID</th><th>Washroom</th><th>Lunch</th><th>Other</th><th>Total</th></tr></thead>
+      <tbody>
+        {% for (emp_id, name), by_type in totals.items() %}
+        <tr>
+          <td><strong>{{ name }}</strong></td>
+          <td class="mono">{{ emp_id }}</td>
+          <td>{{ duration_str(by_type.get('washroom', 0)) }}</td>
+          <td>{{ duration_str(by_type.get('lunch', 0)) }}</td>
+          <td>{{ duration_str(by_type.get('other', 0)) }}</td>
+          <td><strong>{{ duration_str(by_type.values()|sum) }}</strong></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}<div class="empty">Is din koi break record nahi hua.</div>{% endif %}
+</div>
+
+{% if running %}
+<div class="panel">
+  <div class="panel-head"><h2>⏳ Abhi chal rahe</h2></div>
+  <div class="panel-body tight">
+    <table>
+      <thead><tr><th>Employee</th><th>Break</th><th>Start</th></tr></thead>
+      <tbody>
+        {% for b in running %}
+        <tr>
+          <td>{{ b.name }}</td>
+          <td>{{ break_names.get(b.type, b.type) }}</td>
+          <td>{{ hhmm_str(b.start_time) }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endif %}
+{% endblock %}

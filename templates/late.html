@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Late — Merry Team{% endblock %}
+{% block heading %}Late check-ins{% endblock %}
+
+{% block content %}
+<div class="panel">
+  <div class="panel-body">
+    <form class="filter" method="get">
+      <div>
+        <label for="date">Date</label>
+        <input id="date" type="date" name="date" value="{{ date }}">
+      </div>
+      <button class="btn" type="submit">Dekhein</button>
+      <a class="btn btn-ghost" href="{{ url_for('late_report') }}">Aaj</a>
+      <span class="note" style="margin-left:auto">Cutoff: <strong>{{ late_after }}</strong> · <a href="{{ url_for('settings') }}">badlein</a></span>
+    </form>
+  </div>
+</div>
+
+<div class="panel">
+  <div class="panel-head"><h2>⚠️ Late — {{ date }} ({{ late_rows|length }})</h2></div>
+  {% if late_rows %}
+  <div class="panel-body tight">
+    <table>
+      <thead><tr><th>Employee</th><th>ID</th><th>Check In</th><th>Der</th></tr></thead>
+      <tbody>
+        {% for item in late_rows %}
+        <tr>
+          <td><a href="{{ url_for('employee_detail', tid=item.row.user_id) }}"><strong>{{ item.row.name }}</strong></a></td>
+          <td class="mono">{{ item.row.employee_id }}</td>
+          <td>{{ hhmm_str(item.row.check_in) }}</td>
+          <td><span class="badge warn">{{ item.minutes }} min late</span></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}<div class="empty">Is din koi late check-in nahi. ✅</div>{% endif %}
+</div>
+{% endblock %}

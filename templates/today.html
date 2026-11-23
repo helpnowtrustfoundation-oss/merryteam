@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}Today — Merry Team{% endblock %}
+{% block heading %}Today report{% endblock %}
+
+{% block content %}
+<div class="panel">
+  <div class="panel-body">
+    <form class="filter" method="get">
+      <div>
+        <label for="date">Date</label>
+        <input id="date" type="date" name="date" value="{{ date }}">
+      </div>
+      <button class="btn" type="submit">Dekhein</button>
+      <a class="btn btn-ghost" href="{{ url_for('today_report') }}">Aaj</a>
+    </form>
+  </div>
+</div>
+
+<div class="cards">
+  <div class="card green"><div class="label">Present</div><div class="value">{{ present|length }}</div></div>
+  <div class="card red"><div class="label">Absent</div><div class="value">{{ absent|length }}</div></div>
+</div>
+
+<div class="panel">
+  <div class="panel-head"><h2>🟢 Present — {{ date }}</h2></div>
+  {% if present %}
+  <div class="panel-body tight">
+    <table>
+      <thead><tr><th>Employee</th><th>ID</th><th>In</th><th>Out</th><th>Work</th><th>Status</th></tr></thead>
+      <tbody>
+        {% for item in present %}
+        <tr>
+          <td><a href="{{ url_for('employee_detail', tid=item.user.telegram_id) }}"><strong>{{ item.user.name }}</strong></a></td>
+          <td class="mono">{{ item.user.employee_id }}</td>
+          <td>{{ hhmm_str(item.att.check_in) }}</td>
+          <td>{{ hhmm_str(item.att.check_out) if item.att.check_out else '—' }}</td>
+          <td>{{ duration_str(item.att.work_seconds) }}</td>
+          <td>{% if item.late %}<span class="badge warn">Late</span>{% else %}<span class="badge ok">On time</span>{% endif %}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}<div class="empty">Koi present nahi.</div>{% endif %}
+</div>
+
+<div class="panel">
+  <div class="panel-head"><h2>🔴 Absent — {{ date }}</h2></div>
+  {% if absent %}
+  <div class="panel-body tight">
+    <table>
+      <thead><tr><th>Employee</th><th>ID</th><th>Telegram ID</th></tr></thead>
+      <tbody>
+        {% for user in absent %}
+        <tr>
+          <td><a href="{{ url_for('employee_detail', tid=user.telegram_id) }}">{{ user.name }}</a></td>
+          <td class="mono">{{ user.employee_id }}</td>
+          <td class="mono">{{ user.telegram_id }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}<div class="empty">Sab present hain. 🎉</div>{% endif %}
+</div>
+{% endblock %}

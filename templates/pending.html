@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Approvals — Merry Team{% endblock %}
+{% block heading %}Approvals{% endblock %}
+
+{% block content %}
+<div class="panel">
+  <div class="panel-head"><h2>🆕 Pending registrations ({{ rows|length }})</h2></div>
+  {% if rows %}
+  <div class="panel-body tight">
+    <table>
+      <thead><tr><th>Name</th><th>Employee ID</th><th>Telegram ID</th><th>Registered</th><th>Action</th></tr></thead>
+      <tbody>
+        {% for row in rows %}
+        <tr>
+          <td><strong>{{ row.name }}</strong></td>
+          <td class="mono">{{ row.employee_id }}</td>
+          <td class="mono">{{ row.telegram_id }}</td>
+          <td class="small muted">{{ date_of(row.registered_at) }}</td>
+          <td>
+            <div class="btn-row">
+              <form class="inline" method="post" action="{{ url_for('approve', tid=row.telegram_id) }}">
+                <button class="btn btn-green btn-sm" type="submit">✓ Approve</button>
+              </form>
+              <form class="inline" method="post" action="{{ url_for('reject', tid=row.telegram_id) }}">
+                <button class="btn btn-red btn-sm" type="submit">✕ Reject</button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty">Koi pending registration nahi hai. ✅</div>
+  {% endif %}
+</div>
+<div class="note">Approve/reject ke baad employee ko Telegram par message bhej diya jata hai.</div>
+{% endblock %}

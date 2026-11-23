@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Login — Merry Team</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="login-page">
+  <div class="login-box">
+    <div class="logo">🎄</div>
+    <h1>Merry Team</h1>
+    <p>Admin panel me login karein</p>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% for category, message in messages %}
+        <div class="flash {{ category }}" style="margin-bottom:12px">{{ message }}</div>
+      {% endfor %}
+    {% endwith %}
+
+    <form method="post">
+      <label for="username">Username</label>
+      <input id="username" name="username" type="text" autocomplete="username" required autofocus>
+
+      <label for="password">Password</label>
+      <input id="password" name="password" type="password" autocomplete="current-password" required>
+
+      <button class="btn" type="submit">Login →</button>
+    </form>
+    <div class="login-foot">Merry Team · Attendance Admin</div>
+  </div>
+</div>
+</body>
+</html>

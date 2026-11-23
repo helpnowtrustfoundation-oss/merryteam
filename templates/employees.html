@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Employees — Merry Team{% endblock %}
+{% block heading %}Employees{% endblock %}
+
+{% block content %}
+<div class="panel">
+  <div class="panel-head"><h2>👥 All employees ({{ users|length }})</h2></div>
+  <div class="panel-body tight">
+    <table>
+      <thead><tr><th>Name</th><th>Employee ID</th><th>Telegram ID</th><th>Status</th><th>Today check-in</th><th></th></tr></thead>
+      <tbody>
+        {% for user in users %}
+        <tr>
+          <td><strong>{{ user.name }}</strong></td>
+          <td class="mono">{{ user.employee_id }}</td>
+          <td class="mono">{{ user.telegram_id }}</td>
+          <td>
+            {% if user.status == 'approved' %}<span class="badge ok">Approved</span>
+            {% elif user.status == 'pending' %}<span class="badge warn">Pending</span>
+            {% else %}<span class="badge bad">Rejected</span>{% endif %}
+          </td>
+          <td>
+            {% set att = att_by_user.get(user.telegram_id) %}
+            {% if att %}{{ hhmm_str(att.check_in) }}{% else %}<span class="muted">—</span>{% endif %}
+          </td>
+          <td><a class="btn btn-ghost btn-sm" href="{{ url_for('employee_detail', tid=user.telegram_id) }}">Details</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Monthly — Merry Team{% endblock %}
+{% block heading %}Monthly report{% endblock %}
+
+{% block content %}
+<div class="panel">
+  <div class="panel-body">
+    <form class="filter" method="get">
+      <div>
+        <label for="month">Month</label>
+        <input id="month" type="month" name="month" value="{{ month }}">
+      </div>
+      <button class="btn" type="submit">Dekhein</button>
+      <a class="btn btn-ghost" href="{{ url_for('month_report') }}">Is mahine</a>
+      <div class="btn-row" style="margin-left:auto">
+        <a class="btn btn-ghost btn-sm" href="{{ url_for('export', fmt='csv', month=month) }}">⬇ CSV</a>
+        <a class="btn btn-sm" href="{{ url_for('export', fmt='xlsx', month=month) }}">⬇ Excel</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="cards">
+  <div class="card brand"><div class="label">Employees</div><div class="value">{{ totals.employees }}</div></div>
+  <div class="card green"><div class="label">Attendance entries</div><div class="value">{{ totals.days }}</div></div>
+  <div class="card"><div class="label">Total working time</div><div class="value" style="font-size:22px">{{ duration_str(totals.work) }}</div></div>
+  <div class="card amber"><div class="label">Late entries</div><div class="value">{{ totals.late }}</div></div>
+</div>
+
+<div class="panel">
+  <div class="panel-head"><h2>📆 {{ month }}</h2></div>
+  {% if stats %}
+  <div class="panel-body tight">
+    <table>
+      <thead>
+        <tr>
+          <th>Employee</th><th>ID</th><th>Days</th><th>Work</th><th>Late</th>
+          <th>Lunch</th><th>Washroom</th><th>Other</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in stats %}
+        <tr>
+          <td><strong>{{ item.name }}</strong></td>
+          <td class="mono">{{ item.employee_id }}</td>
+          <td>{{ item.days }}</td>
+          <td>{{ duration_str(item.work) }}</td>
+          <td>{% if item.late %}<span class="badge warn">{{ item.late }}</span>{% else %}0{% endif %}</td>
+          <td>{{ duration_str(item.lunch) }}</td>
+          <td>{{ duration_str(item.washroom) }}</td>
+          <td>{{ duration_str(item.other) }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}<div class="empty">Is mahine koi attendance data nahi hai.</div>{% endif %}
+</div>
+{% endblock %}

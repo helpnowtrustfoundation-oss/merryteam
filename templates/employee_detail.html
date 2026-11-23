@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block title %}{{ user.name }} — Merry Team{% endblock %}
+{% block heading %}{{ user.name }}{% endblock %}
+
+{% block content %}
+<div class="cards">
+  <div class="card">
+    <div class="label">Employee ID</div>
+    <div class="value" style="font-size:20px">{{ user.employee_id }}</div>
+  </div>
+  <div class="card">
+    <div class="label">Telegram ID</div>
+    <div class="value" style="font-size:20px">{{ user.telegram_id }}</div>
+  </div>
+  <div class="card">
+    <div class="label">Status</div>
+    <div class="value" style="font-size:20px">
+      {% if user.status == 'approved' %}<span class="badge ok">Approved</span>
+      {% elif user.status == 'pending' %}<span class="badge warn">Pending</span>
+      {% else %}<span class="badge bad">Rejected</span>{% endif %}
+    </div>
+  </div>
+  <div class="card">
+    <div class="label">Present (last 30 days)</div>
+    <div class="value">{{ rows|length }}</div>
+  </div>
+</div>
+
+<div class="panel">
+  <div class="panel-head"><h2>📅 Attendance — pichhle 30 din</h2></div>
+  {% if rows %}
+  <div class="panel-body tight">
+    <table>
+      <thead><tr><th>Date</th><th>In</th><th>Out</th><th>Work</th><th>Status</th></tr></thead>
+      <tbody>
+        {% for row in rows %}
+        <tr>
+          <td>{{ row.date }}</td>
+          <td>{{ hhmm_str(row.check_in) }}</td>
+          <td>{{ hhmm_str(row.check_out) if row.check_out else '—' }}</td>
+          <td>{{ duration_str(row.work_seconds) }}</td>
+          <td>{% if is_late(row.check_in, late_after) %}<span class="badge warn">Late</span>{% else %}<span class="badge ok">On time</span>{% endif %}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty">Koi attendance record nahi mila.</div>
+  {% endif %}
+</div>
+
+<div class="panel">
+  <div class="panel-head"><h2>☕ Breaks — is mahine</h2></div>
+  {% if breaks %}
+  <div class="panel-body tight">
+    <table>
+      <thead><tr><th>Date</th><th>Type</th><th>Start</th><th>End</th><th>Duration</th></tr></thead>
+      <tbody>
+        {% for b in breaks %}
+        <tr>
+          <td>{{ b.date }}</td>
+          <td>{{ break_names.get(b.type, b.type) }}</td>
+          <td>{{ hhmm_str(b.start_time) }}</td>
+          <td>{{ hhmm_str(b.end_time) if b.end_time else ' chal raha hai' }}</td>
+          <td>{{ duration_str(b.duration_seconds) }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty">Is mahine koi break nahi liya.</div>
+  {% endif %}
+</div>
+{% endblock %}
