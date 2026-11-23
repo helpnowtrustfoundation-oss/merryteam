@@ -1,14 +1,36 @@
 """SQLite persistence layer for the attendance bot."""
 from __future__ import annotations
 
+import logging
+import os
 import sqlite3
 from contextlib import contextmanager
+from pathlib import Path
 from typing import Iterator
 
 from werkzeug.security import generate_password_hash
 
 from config import ADMIN_PASSWORD, ADMIN_USERNAME, DB_PATH
 from utils import now_ts
+
+logger = logging.getLogger("merry-team.database")
+
+
+def _resolve_db_path() -> Path:
+    """Use configured DB path if writable; otherwise fall back to a local file."""
+    try:
+        DB_PATH.parent.mkdir(parents=True, exist_ok=True)
+        if os.access(DB_PATH.parent, os.W_OK):
+            return DB_PATH
+        logger.warning("DB folder not writable: %s", DB_PATH.parent)
+    except OSError as exc:
+        logger.warning("Cannot prepare DB folder %s: %s", DB_PATH.parent, exc)
+    fallback = Path("attendance.db")
+    logger.warning("Using fallback DB: %s (data may not persist across redeploys)", fallback)
+    return fallback
+
+
+ACTIVE_DB_PATH = _resolve_db_path()
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS users (
@@ -58,7 +80,7 @@ CREATE INDEX IF NOT EXISTS idx_breaks_attendance ON breaks(attendance_id);
 
 @contextmanager
 def get_db() -> Iterator[sqlite3.Connection]:
-    db = sqlite3.connect(DB_PATH, timeout=10)
+    db = sqlite3.connect(ACTIVE_DB_PATH, timeout=10)
     db.row_factory = sqlite3.Row
     db.execute("PRAGMA foreign_keys = ON")
     try:
