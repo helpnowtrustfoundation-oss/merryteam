@@ -4,6 +4,7 @@ from __future__ import annotations
 import os
 import secrets
 from pathlib import Path
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from dotenv import load_dotenv
 
@@ -17,8 +18,16 @@ ADMIN_IDS: set[int] = {
     if part.strip().isdigit()
 }
 
-TIMEZONE: str = os.getenv("TIMEZONE", "Asia/Kolkata").strip() or "Asia/Kolkata"
-DB_PATH: Path = Path(os.getenv("DB_PATH", "attendance.db").strip() or "attendance.db")
+_raw_timezone = os.getenv("TIMEZONE", "Asia/Kolkata").strip()
+# "Asia/Kolkata (auto)" jaase values ko bhi safari kar lein
+_raw_timezone = _raw_timezone.split("(")[0].strip() or "Asia/Kolkata"
+try:
+    ZoneInfo(_raw_timezone)
+except (ZoneInfoNotFoundError, ValueError):
+    _raw_timezone = "Asia/Kolkata"
+TIMEZONE: str = _raw_timezone
+_raw_db_path = os.getenv("DB_PATH", "attendance.db").strip().split("(")[0].strip()
+DB_PATH: Path = Path(_raw_db_path or "attendance.db")
 
 # Web admin login
 ADMIN_USERNAME: str = os.getenv("ADMIN_USERNAME", "admin").strip() or "admin"
