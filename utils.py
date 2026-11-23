@@ -8,31 +8,35 @@ from config import TIMEZONE
 
 TZ = ZoneInfo(TIMEZONE)
 
+LABEL_IN = "\U0001F7E2 Check In"
+LABEL_OUT = "\U0001F534 Check Out"
+LABEL_TEA = "\U0001F375 Tea Break"
+LABEL_WASHROOM = "\U0001F6BA Washroom Break"
+LABEL_LUNCH = "\U0001F371 Lunch Break"
+LABEL_OTHER = "\u2615 Other Break"
+LABEL_END = "\u2705 End Break"
+LABEL_MY = "\U0001F4CA My Attendance"
+
 MENU_LABELS = [
-    "\U0001F7E2 Check In",
-    "\U0001F534 Check Out",
-    "\U0001F6BA Washroom Break",
-    "\U0001F371 Lunch Break",
-    "\u2615 Other Break",
-    "\u2705 End Break",
-    "\U0001F4CA My Attendance",
+    LABEL_IN,
+    LABEL_OUT,
+    LABEL_TEA,
+    LABEL_WASHROOM,
+    LABEL_LUNCH,
+    LABEL_OTHER,
+    LABEL_END,
+    LABEL_MY,
 ]
 
-LABEL_IN = MENU_LABELS[0]
-LABEL_OUT = MENU_LABELS[1]
-LABEL_WASHROOM = MENU_LABELS[2]
-LABEL_LUNCH = MENU_LABELS[3]
-LABEL_OTHER = MENU_LABELS[4]
-LABEL_END = MENU_LABELS[5]
-LABEL_MY = MENU_LABELS[6]
-
 BREAK_TYPES = {
+    LABEL_TEA: "tea",
     LABEL_WASHROOM: "washroom",
     LABEL_LUNCH: "lunch",
     LABEL_OTHER: "other",
 }
 
 BREAK_NAMES = {
+    "tea": "Tea Break",
     "washroom": "Washroom Break",
     "lunch": "Lunch Break",
     "other": "Other Break",

@@ -35,7 +35,7 @@
       <thead>
         <tr>
           <th>Employee</th><th>ID</th><th>Days</th><th>Work</th><th>Late</th>
-          <th>Lunch</th><th>Washroom</th><th>Other</th>
+          <th>Tea</th><th>Lunch</th><th>Washroom</th><th>Other</th>
         </tr>
       </thead>
       <tbody>
@@ -46,6 +46,7 @@
           <td>{{ item.days }}</td>
           <td>{{ duration_str(item.work) }}</td>
           <td>{% if item.late %}<span class="badge warn">{{ item.late }}</span>{% else %}0{% endif %}</td>
+          <td>{{ duration_str(item.tea) }}</td>
           <td>{{ duration_str(item.lunch) }}</td>
           <td>{{ duration_str(item.washroom) }}</td>
           <td>{{ duration_str(item.other) }}</td>

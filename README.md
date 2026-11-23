@@ -5,10 +5,10 @@ Employee attendance aur break tracking. **Employee Telegram par**, **admin brows
 ## Features
 
 **Employee (Telegram)**
-- `/start` se naam + employee ID register
-- Admin approval ke baad 7-button menu
+- Koi bhi message → naam + employee ID registration (ya `/start`)
+- Admin approval ke baad 8-button menu
 - Check In / Check Out
-- Washroom, Lunch, Other break start + End Break
+- Tea, Washroom, Lunch, Other break start + End Break
 - My Attendance (aaj + pichhle 7 din)
 
 **Admin (Web app)**

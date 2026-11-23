@@ -297,10 +297,25 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
         await _finish_registration(update, context, text)
         return
 
+    user = db.get_user(update.effective_user.id)
+
+    if user is None:
+        # Koi bhi pehla message registration shuru kar deta hai
+        context.user_data["reg_state"] = "name"
+        await update.message.reply_text(
+            "Namaste! Office Attendance Bot me swagat hai. 👋\n"
+            "Pehle registration karte hain — aapka **naam** likhein:"
+        )
+        return
+
+    if user["status"] != "approved":
+        await update.message.reply_text(
+            "Aapka registration admin ke paas pending hai. Approve hone tak wait karein."
+        )
+        return
+
     if text not in MENU_LABELS:
-        user = db.get_user(update.effective_user.id)
-        if user and user["status"] == "approved":
-            await update.message.reply_text("Neeche diye gaye buttons ka hi istemal karein.")
+        await _send_menu(update, context, "Neeche diye gaye buttons ka istemal karein.")
         return
 
     user = await _approved_user(update, context)

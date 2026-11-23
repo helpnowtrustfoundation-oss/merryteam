@@ -103,6 +103,7 @@ def monthly_summary(month: str) -> tuple[list[dict], dict]:
                 "days": 0,
                 "work": 0.0,
                 "late": 0,
+                "tea": 0.0,
                 "lunch": 0.0,
                 "washroom": 0.0,
                 "other": 0.0,
@@ -116,7 +117,7 @@ def monthly_summary(month: str) -> tuple[list[dict], dict]:
     result = []
     for uid, entry in stats.items():
         breaks = break_totals.get(uid, {})
-        for kind in ("lunch", "washroom", "other"):
+        for kind in ("tea", "lunch", "washroom", "other"):
             entry[kind] = breaks.get(kind, 0)
         result.append(entry)
     result.sort(key=lambda item: item["name"])

@@ -21,12 +21,13 @@
   {% if totals %}
   <div class="panel-body tight">
     <table>
-      <thead><tr><th>Employee</th><th>ID</th><th>Washroom</th><th>Lunch</th><th>Other</th><th>Total</th></tr></thead>
+      <thead><tr><th>Employee</th><th>ID</th><th>Tea</th><th>Washroom</th><th>Lunch</th><th>Other</th><th>Total</th></tr></thead>
       <tbody>
         {% for (emp_id, name), by_type in totals.items() %}
         <tr>
           <td><strong>{{ name }}</strong></td>
           <td class="mono">{{ emp_id }}</td>
+          <td>{{ duration_str(by_type.get('tea', 0)) }}</td>
           <td>{{ duration_str(by_type.get('washroom', 0)) }}</td>
           <td>{{ duration_str(by_type.get('lunch', 0)) }}</td>
           <td>{{ duration_str(by_type.get('other', 0)) }}</td>
