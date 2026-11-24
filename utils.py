@@ -8,33 +8,8 @@ from config import TIMEZONE
 
 TZ = ZoneInfo(TIMEZONE)
 
-LABEL_IN = "\U0001F7E2 Check In"
-LABEL_OUT = "\U0001F534 Check Out"
-LABEL_TEA = "\U0001F375 Tea Break"
-LABEL_WASHROOM = "\U0001F6BA Washroom Break"
-LABEL_LUNCH = "\U0001F371 Lunch Break"
-LABEL_OTHER = "\u2615 Other Break"
-LABEL_END = "\u2705 End Break"
-LABEL_MY = "\U0001F4CA My Attendance"
-
-MENU_LABELS = [
-    LABEL_IN,
-    LABEL_OUT,
-    LABEL_TEA,
-    LABEL_WASHROOM,
-    LABEL_LUNCH,
-    LABEL_OTHER,
-    LABEL_END,
-    LABEL_MY,
-]
-
-BREAK_TYPES = {
-    LABEL_TEA: "tea",
-    LABEL_WASHROOM: "washroom",
-    LABEL_LUNCH: "lunch",
-    LABEL_OTHER: "other",
-}
-
+# Button labels and their per-language mapping live in i18n.py. Break types
+# are stored in the DB as canonical keys ("tea", "lunch", ...).
 BREAK_NAMES = {
     "tea": "Tea Break",
     "washroom": "Washroom Break",

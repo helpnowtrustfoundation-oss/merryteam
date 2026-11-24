@@ -21,6 +21,7 @@ from werkzeug.security import check_password_hash
 import database as db
 from config import SECRET_KEY, TIMEZONE
 from handlers.employee import menu_keyboard
+from i18n import LANG_LABELS, normalize_lang, t as translate
 from notifier import send_sync
 from reports import csv_bytes, monthly_summary, xlsx_bytes
 from utils import (
@@ -54,11 +55,27 @@ def login_required(view):
 
 @app.context_processor
 def inject_globals():
+    lang = normalize_lang(session.get("lang"))
     return {
         "current_date": today_str(),
         "timezone_name": TIMEZONE,
         "admin_user": session.get("admin"),
+        "lang": lang,
+        "lang_labels": LANG_LABELS,
+        "t": lambda key, **kwargs: translate(key, lang, **kwargs),
     }
+
+
+@app.post("/language/<lang>")
+@login_required
+def set_language(lang: str):
+    code = normalize_lang(lang)
+    session["lang"] = code
+    flash(translate("web.language_saved", code, label=LANG_LABELS[code]), "info")
+    target = request.form.get("next") or request.referrer or url_for("dashboard")
+    if not target.startswith("/") or target.startswith("//"):
+        target = url_for("dashboard")
+    return redirect(target)
 
 
 def _parse_date(value: str | None) -> str:
@@ -143,7 +160,6 @@ def dashboard():
         active_breaks=active_breaks,
         recent=db.attendance_for_dates(_recent_dates(7))[:8],
         late_after=late_after,
-        break_names=BREAK_NAMES,
         hhmm_str=hhmm_str,
         duration_str=duration_str,
     )
@@ -165,10 +181,11 @@ def approve(tid: int):
     user = db.get_user(tid)
     if user and user["status"] == "pending":
         db.set_user_status(tid, "approved")
+        lang = db.get_user_language(tid)
         sent = send_sync(
             tid,
-            "🎉 Aapka registration approve ho gaya!\nAb Telegram par menu use karke attendance karein.",
-            menu_keyboard(),
+            translate("bot.approved", lang),
+            menu_keyboard(lang),
         )
         flash(
             f"{user['name']} approve ho gaya."

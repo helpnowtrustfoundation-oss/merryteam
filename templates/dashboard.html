@@ -1,40 +1,40 @@
 {% extends "base.html" %}
-{% block title %}Dashboard — Merry Team{% endblock %}
-{% block heading %}Dashboard{% endblock %}
+{% block title %}{{ t('heading.dashboard') }} — Merry Team{% endblock %}
+{% block heading %}{{ t('heading.dashboard') }}{% endblock %}
 
 {% block content %}
 <div class="cards">
   <div class="card green">
-    <div class="label">Present today</div>
+    <div class="label">{{ t('card.present') }}</div>
     <div class="value">{{ present|length }}</div>
-    <div class="hint">of {{ present|length + absent|length }} approved employees</div>
+    <div class="hint">{{ t('card.present.hint', total=present|length + absent|length) }}</div>
   </div>
   <div class="card red">
-    <div class="label">Absent today</div>
+    <div class="label">{{ t('card.absent') }}</div>
     <div class="value">{{ absent|length }}</div>
-    <div class="hint">abhi tak check-in nahi kiya</div>
+    <div class="hint">{{ t('card.absent.hint') }}</div>
   </div>
   <div class="card amber">
-    <div class="label">Late check-ins</div>
+    <div class="label">{{ t('card.late') }}</div>
     <div class="value">{{ late_count }}</div>
-    <div class="hint">cutoff {{ late_after if late_after is defined else '' }}</div>
+    <div class="hint">{{ t('card.late.hint', cutoff=late_after if late_after is defined else '') }}</div>
   </div>
   <div class="card brand">
-    <div class="label">Pending approvals</div>
+    <div class="label">{{ t('card.pending') }}</div>
     <div class="value">{{ pending_count }}</div>
-    <div class="hint"><a href="{{ url_for('pending') }}">review karein →</a></div>
+    <div class="hint"><a href="{{ url_for('pending') }}">{{ t('card.pending.hint') }}</a></div>
   </div>
 </div>
 
 <div class="panel">
   <div class="panel-head">
-    <h2>🟢 Present — {{ date }}</h2>
-    <a class="btn btn-ghost btn-sm" href="{{ url_for('today_report') }}">Poori report</a>
+    <h2>{{ t('panel.present', date=date) }}</h2>
+    <a class="btn btn-ghost btn-sm" href="{{ url_for('today_report') }}">{{ t('full_report') }}</a>
   </div>
   {% if present %}
   <div class="panel-body tight">
     <table>
-      <thead><tr><th>Employee</th><th>ID</th><th>Check In</th><th>Check Out</th><th>Status</th></tr></thead>
+      <thead><tr><th>{{ t('table.employee') }}</th><th>{{ t('table.id') }}</th><th>{{ t('table.check_in') }}</th><th>{{ t('table.check_out') }}</th><th>{{ t('table.status') }}</th></tr></thead>
       <tbody>
         {% for item in present %}
         <tr>
@@ -43,8 +43,8 @@
           <td>{{ hhmm_str(item.att.check_in) }}</td>
           <td>{{ hhmm_str(item.att.check_out) if item.att.check_out else '—' }}</td>
           <td>
-            {% if item.late %}<span class="badge warn">Late</span>{% else %}<span class="badge ok">On time</span>{% endif %}
-            {% if not item.att.check_out %}<span class="badge info">Andar</span>{% endif %}
+            {% if item.late %}<span class="badge warn">{{ t('badge.late') }}</span>{% else %}<span class="badge ok">{{ t('badge.on_time') }}</span>{% endif %}
+            {% if not item.att.check_out %}<span class="badge info">{{ t('badge.inside') }}</span>{% endif %}
           </td>
         </tr>
         {% endfor %}
@@ -52,12 +52,12 @@
     </table>
   </div>
   {% else %}
-  <div class="empty">Aaj abhi koi check-in nahi hua.</div>
+  <div class="empty">{{ t('empty.no_checkin') }}</div>
   {% endif %}
 </div>
 
 <div class="panel">
-  <div class="panel-head"><h2>🔴 Absent — {{ date }}</h2></div>
+  <div class="panel-head"><h2>{{ t('panel.absent', date=date) }}</h2></div>
   <div class="panel-body">
     {% if absent %}
       <div class="chips">
@@ -66,34 +66,34 @@
         {% endfor %}
       </div>
     {% else %}
-      <div class="note">Sab approved employees present hain. 🎉</div>
+      <div class="note">{{ t('empty.all_present') }}</div>
     {% endif %}
   </div>
 </div>
 
 <div class="panel">
-  <div class="panel-head"><h2>☕ Abhi chal rahe breaks</h2></div>
+  <div class="panel-head"><h2>{{ t('panel.active_breaks') }}</h2></div>
   {% if active_breaks %}
   <div class="panel-body tight">
     <table>
-      <thead><tr><th>Employee</th><th>Break</th><th>Start</th></tr></thead>
+      <thead><tr><th>{{ t('table.employee') }}</th><th>{{ t('table.break') }}</th><th>{{ t('table.start') }}</th></tr></thead>
       <tbody>
         {% for b in active_breaks %}
-        <tr><td>{{ b.name }}</td><td>{{ break_names.get(b.type, b.type) if break_names is defined else b.type }}</td><td>{{ hhmm_str(b.start_time) }}</td></tr>
+        <tr><td>{{ b.name }}</td><td>{{ t('break.' + b.type) }}</td><td>{{ hhmm_str(b.start_time) }}</td></tr>
         {% endfor %}
       </tbody>
     </table>
   </div>
   {% else %}
-  <div class="empty">Koi break abhi chal nahi raha.</div>
+  <div class="empty">{{ t('empty.no_break') }}</div>
   {% endif %}
 </div>
 
 <div class="panel">
-  <div class="panel-head"><h2>🕒 Recent activity</h2></div>
+  <div class="panel-head"><h2>{{ t('panel.recent') }}</h2></div>
   <div class="panel-body tight">
     <table>
-      <thead><tr><th>Date</th><th>Employee</th><th>In</th><th>Out</th><th>Work</th></tr></thead>
+      <thead><tr><th>{{ t('table.date') }}</th><th>{{ t('table.employee') }}</th><th>{{ t('table.check_in') }}</th><th>{{ t('table.check_out') }}</th><th>{{ t('table.work') }}</th></tr></thead>
       <tbody>
         {% for row in recent %}
         <tr>

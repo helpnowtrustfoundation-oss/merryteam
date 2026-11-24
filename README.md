@@ -19,6 +19,7 @@ Employee attendance aur break tracking. **Employee Telegram par**, **admin brows
 - Reports: Today, Breaks, Late comers, Monthly
 - CSV aur Excel (2 sheets) download
 - Settings me late cutoff time badalna
+- **English ⇄ 中文**: dashboard ke topbar me language switcher; Telegram par `/language` se menu aur messages Chinese me
 
 Timestamps UTC me store, **Asia/Kolkata (IST)** me display.
 
@@ -106,6 +107,7 @@ Web app aur Telegram bot **ek hi process** me chalte hain (bot background thread
 | `templates/`, `static/` | admin panel UI |
 | `bot.py` | Telegram bot handlers registration |
 | `config.py` | `.env` se settings |
+| `i18n.py` | Dashboard aur bot menu ke English/Chinese labels |
 | `database.py` | SQLite / PostgreSQL schema + queries |
 | `handlers/employee.py` | registration + attendance flow |
 | `reports.py` | CSV / Excel report builders |

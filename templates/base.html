@@ -1,34 +1,35 @@
 <!doctype html>
-<html lang="en">
+<html lang="{{ lang }}">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block title %}Merry Team Admin{% endblock %}</title>
+  <link rel="icon" href="{{ url_for('static', filename='logo.png') }}" type="image/png">
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
 <div class="layout">
   <aside class="sidebar">
     <div class="brand">
-      <div class="brand-icon">🎄</div>
-      <div><strong>Merry Team</strong><small>Attendance Admin</small></div>
+      <img class="brand-logo" src="{{ url_for('static', filename='logo.png') }}" alt="Merry Team">
+      <div><strong>Merry Team</strong><small>{{ t('brand.sub') }}</small></div>
     </div>
     <nav class="nav">
-      <a href="{{ url_for('dashboard') }}" class="{{ 'active' if request.endpoint == 'dashboard' }}">▦ &nbsp; Dashboard</a>
-      <a href="{{ url_for('pending') }}" class="{{ 'active' if request.endpoint in ['pending', 'approve', 'reject'] }}">🆕 &nbsp; Approvals
+      <a href="{{ url_for('dashboard') }}" class="{{ 'active' if request.endpoint == 'dashboard' }}">▦ &nbsp; {{ t('nav.dashboard') }}</a>
+      <a href="{{ url_for('pending') }}" class="{{ 'active' if request.endpoint in ['pending', 'approve', 'reject'] }}">🆕 &nbsp; {{ t('nav.approvals') }}
         {% if pending_count %}<span class="pill">{{ pending_count }}</span>{% endif %}</a>
-      <a href="{{ url_for('employees') }}" class="{{ 'active' if request.endpoint in ['employees', 'employee_detail'] }}">👥 &nbsp; Employees</a>
-      <div class="nav-label">REPORTS</div>
-      <a href="{{ url_for('today_report') }}" class="{{ 'active' if request.endpoint == 'today_report' }}">📅 &nbsp; Today</a>
-      <a href="{{ url_for('breaks_report') }}" class="{{ 'active' if request.endpoint == 'breaks_report' }}">☕ &nbsp; Breaks</a>
-      <a href="{{ url_for('late_report') }}" class="{{ 'active' if request.endpoint == 'late_report' }}">⚠️ &nbsp; Late comers</a>
-      <a href="{{ url_for('month_report') }}" class="{{ 'active' if request.endpoint == 'month_report' }}">📆 &nbsp; Monthly</a>
-      <div class="nav-label">SYSTEM</div>
-      <a href="{{ url_for('settings') }}" class="{{ 'active' if request.endpoint == 'settings' }}">⚙️ &nbsp; Settings</a>
+      <a href="{{ url_for('employees') }}" class="{{ 'active' if request.endpoint in ['employees', 'employee_detail'] }}">👥 &nbsp; {{ t('nav.employees') }}</a>
+      <div class="nav-label">{{ t('nav.reports') }}</div>
+      <a href="{{ url_for('today_report') }}" class="{{ 'active' if request.endpoint == 'today_report' }}">📅 &nbsp; {{ t('nav.today') }}</a>
+      <a href="{{ url_for('breaks_report') }}" class="{{ 'active' if request.endpoint == 'breaks_report' }}">☕ &nbsp; {{ t('nav.breaks') }}</a>
+      <a href="{{ url_for('late_report') }}" class="{{ 'active' if request.endpoint == 'late_report' }}">⚠️ &nbsp; {{ t('nav.late') }}</a>
+      <a href="{{ url_for('month_report') }}" class="{{ 'active' if request.endpoint == 'month_report' }}">📆 &nbsp; {{ t('nav.monthly') }}</a>
+      <div class="nav-label">{{ t('nav.system') }}</div>
+      <a href="{{ url_for('settings') }}" class="{{ 'active' if request.endpoint == 'settings' }}">⚙️ &nbsp; {{ t('nav.settings') }}</a>
     </nav>
     <div class="sidebar-foot">
       <span>👤 {{ admin_user }}</span>
-      <a href="{{ url_for('logout') }}">Logout</a>
+      <a href="{{ url_for('logout') }}">{{ t('nav.logout') }}</a>
     </div>
   </aside>
 
@@ -38,7 +39,17 @@
         <div class="page-title">{% block heading %}Dashboard{% endblock %}</div>
         <div class="page-sub">{{ current_date }} &nbsp;•&nbsp; {{ timezone_name }}</div>
       </div>
-      <a class="btn btn-ghost" href="{{ url_for('month_report') }}">📊 Reports</a>
+      <div class="topbar-actions">
+        <div class="lang-switch" aria-label="Language">
+          {% for code in ['en', 'zh'] %}
+          <form method="post" action="{{ url_for('set_language', lang=code) }}">
+            <input type="hidden" name="next" value="{{ request.full_path }}">
+            <button type="submit" class="lang-btn {{ 'active' if lang == code }}">{{ lang_labels[code] }}</button>
+          </form>
+          {% endfor %}
+        </div>
+        <a class="btn btn-ghost" href="{{ url_for('month_report') }}">{{ t('topbar.reports') }}</a>
+      </div>
     </header>
 
     {% with messages = get_flashed_messages(with_categories=true) %}

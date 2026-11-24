@@ -11,6 +11,7 @@ from typing import Iterator
 from werkzeug.security import generate_password_hash
 
 from config import ADMIN_PASSWORD, ADMIN_USERNAME, DATABASE_URL, DB_PATH, USE_POSTGRES
+from i18n import DEFAULT_LANGUAGE, normalize_lang
 from utils import now_ts
 
 logger = logging.getLogger("merry-team.database")
@@ -47,6 +48,7 @@ CREATE TABLE IF NOT EXISTS users (
     employee_id   TEXT NOT NULL UNIQUE,
     role          TEXT NOT NULL DEFAULT 'employee',
     status        TEXT NOT NULL DEFAULT 'pending',
+    language      TEXT NOT NULL DEFAULT 'en',
     registered_at REAL NOT NULL
 );
 
@@ -130,11 +132,25 @@ def get_db() -> Iterator[_Connection]:
         db.close()
 
 
+def _ensure_language_column(db: _Connection) -> None:
+    """Add users.language to databases created before localization existed."""
+    if USE_POSTGRES:
+        db.execute(
+            "ALTER TABLE users ADD COLUMN IF NOT EXISTS language "
+            "TEXT NOT NULL DEFAULT 'en'"
+        )
+        return
+    columns = {row["name"] for row in db.execute("PRAGMA table_info(users)").fetchall()}
+    if "language" not in columns:
+        db.execute("ALTER TABLE users ADD COLUMN language TEXT NOT NULL DEFAULT 'en'")
+
+
 def init_db() -> None:
     with get_db() as db:
         for statement in SCHEMA.split(";"):
             if statement.strip():
                 db.execute(statement)
+        _ensure_language_column(db)
         db.execute(
             "INSERT INTO settings(key, value) VALUES ('late_after', '09:30') "
             "ON CONFLICT(key) DO NOTHING"
@@ -192,12 +208,39 @@ def employee_id_exists(employee_id: str) -> bool:
         ).fetchone() is not None
 
 
-def create_user(telegram_id: int, name: str, employee_id: str) -> None:
+def create_user(
+    telegram_id: int,
+    name: str,
+    employee_id: str,
+    language: str = DEFAULT_LANGUAGE,
+) -> None:
     with get_db() as db:
         db.execute(
-            "INSERT INTO users(telegram_id, name, employee_id, registered_at) "
-            "VALUES (?, ?, ?, ?)",
-            (telegram_id, name.strip(), employee_id.strip(), now_ts()),
+            "INSERT INTO users(telegram_id, name, employee_id, language, registered_at) "
+            "VALUES (?, ?, ?, ?, ?)",
+            (
+                telegram_id,
+                name.strip(),
+                employee_id.strip(),
+                normalize_lang(language),
+                now_ts(),
+            ),
+        )
+
+
+def get_user_language(telegram_id: int) -> str:
+    with get_db() as db:
+        row = db.execute(
+            "SELECT language FROM users WHERE telegram_id = ?", (telegram_id,)
+        ).fetchone()
+    return normalize_lang(row["language"]) if row else DEFAULT_LANGUAGE
+
+
+def set_user_language(telegram_id: int, language: str) -> None:
+    with get_db() as db:
+        db.execute(
+            "UPDATE users SET language = ? WHERE telegram_id = ?",
+            (normalize_lang(language), telegram_id),
         )
 
 
