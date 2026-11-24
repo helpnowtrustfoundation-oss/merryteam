@@ -11,8 +11,10 @@
 <div class="layout">
   <aside class="sidebar">
     <div class="brand">
-      <img class="brand-logo" src="{{ url_for('static', filename='logo.png') }}" alt="Merry Team">
-      <div><strong>Merry Team</strong><small>{{ t('brand.sub') }}</small></div>
+      <div class="brand-mark">
+        <img class="brand-logo" src="{{ url_for('static', filename='logo.png') }}" alt="Merry Team">
+        <span class="brand-caption">{{ t('brand.sub') }}</span>
+      </div>
     </div>
     <nav class="nav">
       <a href="{{ url_for('dashboard') }}" class="{{ 'active' if request.endpoint == 'dashboard' }}">▦ &nbsp; {{ t('nav.dashboard') }}</a>

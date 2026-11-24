@@ -40,11 +40,11 @@ a { color: inherit; text-decoration: none; }
   top: 0;
   height: 100vh;
 }
-.brand { display: flex; align-items: center; gap: 10px; padding: 0 8px 22px; }
+.brand { display: flex; justify-content: center; padding: 0 8px 22px; }
+.brand-mark { display: flex; flex-direction: column; align-items: center; gap: 6px; }
 .brand-icon { font-size: 26px; }
-.brand-logo { width: 34px; height: 34px; object-fit: contain; flex: 0 0 34px; }
-.brand strong { display: block; color: #fff; font-size: 16px; letter-spacing: .2px; }
-.brand small { display: block; color: #8b93b0; font-size: 11px; margin-top: 2px; }
+.brand-logo { width: 60px; height: 60px; object-fit: contain; }
+.brand-caption { color: #c9cfe6; font-size: 11px; font-weight: 600; text-align: center; }
 .nav { display: flex; flex-direction: column; gap: 3px; flex: 1; }
 .nav a {
   display: flex; align-items: center; padding: 10px 12px;
@@ -167,7 +167,7 @@ code { background: #f1f2f7; padding: 2px 6px; border-radius: 5px; font-size: 12p
   border-radius: 16px; padding: 32px; box-shadow: 0 20px 60px rgba(0,0,0,.35);
 }
 .login-box .logo { font-size: 34px; }
-.login-box .logo-img { display: block; width: 64px; height: 64px; object-fit: contain; margin: 0 auto 6px; }
+.login-box .logo-img { display: block; width: 96px; height: 96px; object-fit: contain; margin: 0 auto 10px; }
 .login-box h1 { margin: 10px 0 4px; font-size: 22px; }
 .login-box p { color: var(--muted); margin: 0 0 22px; font-size: 13px; }
 .login-box label { display: block; font-size: 12px; font-weight: 600; margin: 14px 0 6px; }
