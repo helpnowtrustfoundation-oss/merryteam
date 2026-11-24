@@ -54,6 +54,11 @@ TEXT = {
         "nav.logout": "Logout",
         "topbar.reports": "📊 Reports",
         "web.language_saved": "Language set to {label}.",
+        "action.remove": "Remove",
+        "action.restore": "Restore",
+        "confirm.remove": "Mark {name} as inactive? Attendance records will be kept.",
+        "flash.employee_removed": "{name} removed (inactive). Attendance records kept.",
+        "flash.employee_restored": "{name} restored to active.",
         # dashboard
         "heading.dashboard": "Dashboard",
         "card.present": "Present today",
@@ -150,6 +155,11 @@ TEXT = {
         "nav.logout": "退出登录",
         "topbar.reports": "📊 报表",
         "web.language_saved": "语言已设置为 {label}。",
+        "action.remove": "移除",
+        "action.restore": "恢复",
+        "confirm.remove": "将 {name} 设为离职？考勤记录会保留。",
+        "flash.employee_removed": "{name} 已移除（停用），考勤记录已保留。",
+        "flash.employee_restored": "{name} 已恢复为在职。",
         # dashboard
         "heading.dashboard": "仪表盘",
         "card.present": "今日出勤",

@@ -144,6 +144,9 @@ form.inline { display: inline; }
 
 .chips { display: flex; flex-wrap: wrap; gap: 8px; }
 .chip { background: #f4f5fa; border: 1px solid var(--line); border-radius: 20px; padding: 6px 12px; font-size: 12px; }
+.chip-row { display: inline-flex; align-items: center; gap: 6px; }
+.action-cell { white-space: nowrap; text-align: right; }
+.row-actions { display: flex; align-items: center; gap: 6px; }
 
 .filter { display: flex; align-items: end; gap: 10px; flex-wrap: wrap; }
 .filter label { font-size: 11px; color: var(--muted); display: block; margin-bottom: 5px; font-weight: 600; }

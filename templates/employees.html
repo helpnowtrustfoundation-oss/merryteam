@@ -23,7 +23,24 @@
             {% set att = att_by_user.get(user.telegram_id) %}
             {% if att %}{{ hhmm_str(att.check_in) }}{% else %}<span class="muted">—</span>{% endif %}
           </td>
-          <td><a class="btn btn-ghost btn-sm" href="{{ url_for('employee_detail', tid=user.telegram_id) }}">Details</a></td>
+          <td>
+            <div class="row-actions">
+              <a class="btn btn-ghost btn-sm" href="{{ url_for('employee_detail', tid=user.telegram_id) }}">Details</a>
+              {% if user.status == 'rejected' %}
+              <form method="post" action="{{ url_for('restore_employee', tid=user.telegram_id) }}" class="inline">
+                <input type="hidden" name="next" value="{{ request.full_path }}">
+                <button class="btn btn-green btn-sm" type="submit">{{ t('action.restore') }}</button>
+              </form>
+              {% else %}
+              <form method="post" action="{{ url_for('remove_employee', tid=user.telegram_id) }}" class="inline">
+                <input type="hidden" name="next" value="{{ request.full_path }}">
+                <button class="btn btn-ghost btn-sm" type="submit"
+                        data-confirm="{{ t('confirm.remove', name=user.name) }}"
+                        onclick="return confirm(this.dataset.confirm)">{{ t('action.remove') }}</button>
+              </form>
+              {% endif %}
+            </div>
+          </td>
         </tr>
         {% endfor %}
       </tbody>

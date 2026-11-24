@@ -72,10 +72,16 @@ def set_language(lang: str):
     code = normalize_lang(lang)
     session["lang"] = code
     flash(translate("web.language_saved", code, label=LANG_LABELS[code]), "info")
-    target = request.form.get("next") or request.referrer or url_for("dashboard")
-    if not target.startswith("/") or target.startswith("//"):
-        target = url_for("dashboard")
+    target = _safe_target(
+        request.form.get("next") or request.referrer, url_for("dashboard")
+    )
     return redirect(target)
+
+
+def _safe_target(value: str | None, fallback: str) -> str:
+    if value and value.startswith("/") and not value.startswith("//"):
+        return value
+    return fallback
 
 
 def _parse_date(value: str | None) -> str:
@@ -131,8 +137,10 @@ def dashboard():
     date = today_str()
     late_after = db.get_setting("late_after", "09:30")
     att_by_user = {row["user_id"]: row for row in db.attendance_for_dates((date,))}
+    approved = db.approved_users()
+    approved_ids = {user["telegram_id"] for user in approved}
     present, absent = [], []
-    for user in db.approved_users():
+    for user in approved:
         att = att_by_user.get(user["telegram_id"])
         if att is None:
             absent.append(user)
@@ -146,7 +154,11 @@ def dashboard():
             )
 
     today_breaks = [b for b in db.breaks_for_month(month_str()) if b["date"] == date]
-    active_breaks = [b for b in today_breaks if b["end_time"] is None]
+    active_breaks = [
+        b
+        for b in today_breaks
+        if b["end_time"] is None and b["user_id"] in approved_ids
+    ]
     late_count = sum(1 for item in present if item["late"])
     pending_count = len(db.users_with_status("pending"))
 
@@ -241,6 +253,34 @@ def employee_detail(tid: int):
         duration_str=duration_str,
         break_names=BREAK_NAMES,
     )
+
+
+@app.post("/employee/<int:tid>/remove")
+@login_required
+def remove_employee(tid: int):
+    """Mark an employee inactive without deleting attendance or breaks."""
+    user = db.get_user(tid)
+    if user is None:
+        abort(404)
+    if user["status"] != "rejected":
+        db.set_user_status(tid, "rejected")
+        lang = normalize_lang(session.get("lang"))
+        flash(translate("flash.employee_removed", lang, name=user["name"]), "info")
+    return redirect(_safe_target(request.form.get("next"), url_for("employees")))
+
+
+@app.post("/employee/<int:tid>/restore")
+@login_required
+def restore_employee(tid: int):
+    """Bring a previously removed employee back to active status."""
+    user = db.get_user(tid)
+    if user is None:
+        abort(404)
+    if user["status"] == "rejected":
+        db.set_user_status(tid, "approved")
+        lang = normalize_lang(session.get("lang"))
+        flash(translate("flash.employee_restored", lang, name=user["name"]), "success")
+    return redirect(_safe_target(request.form.get("next"), url_for("employees")))
 
 
 # ---------- reports ----------

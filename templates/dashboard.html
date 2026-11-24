@@ -34,7 +34,7 @@
   {% if present %}
   <div class="panel-body tight">
     <table>
-      <thead><tr><th>{{ t('table.employee') }}</th><th>{{ t('table.id') }}</th><th>{{ t('table.check_in') }}</th><th>{{ t('table.check_out') }}</th><th>{{ t('table.status') }}</th></tr></thead>
+      <thead><tr><th>{{ t('table.employee') }}</th><th>{{ t('table.id') }}</th><th>{{ t('table.check_in') }}</th><th>{{ t('table.check_out') }}</th><th>{{ t('table.status') }}</th><th></th></tr></thead>
       <tbody>
         {% for item in present %}
         <tr>
@@ -45,6 +45,14 @@
           <td>
             {% if item.late %}<span class="badge warn">{{ t('badge.late') }}</span>{% else %}<span class="badge ok">{{ t('badge.on_time') }}</span>{% endif %}
             {% if not item.att.check_out %}<span class="badge info">{{ t('badge.inside') }}</span>{% endif %}
+          </td>
+          <td class="action-cell">
+            <form method="post" action="{{ url_for('remove_employee', tid=item.user.telegram_id) }}" class="inline">
+              <input type="hidden" name="next" value="{{ request.full_path }}">
+              <button class="btn btn-ghost btn-sm" type="submit"
+                      data-confirm="{{ t('confirm.remove', name=item.user.name) }}"
+                      onclick="return confirm(this.dataset.confirm)">{{ t('action.remove') }}</button>
+            </form>
           </td>
         </tr>
         {% endfor %}
@@ -62,7 +70,15 @@
     {% if absent %}
       <div class="chips">
         {% for user in absent %}
-          <a class="chip" href="{{ url_for('employee_detail', tid=user.telegram_id) }}">{{ user.name }} · {{ user.employee_id }}</a>
+          <div class="chip-row">
+            <a class="chip" href="{{ url_for('employee_detail', tid=user.telegram_id) }}">{{ user.name }} · {{ user.employee_id }}</a>
+            <form method="post" action="{{ url_for('remove_employee', tid=user.telegram_id) }}" class="inline">
+              <input type="hidden" name="next" value="{{ request.full_path }}">
+              <button class="btn btn-ghost btn-sm" type="submit"
+                      data-confirm="{{ t('confirm.remove', name=user.name) }}"
+                      onclick="return confirm(this.dataset.confirm)">{{ t('action.remove') }}</button>
+            </form>
+          </div>
         {% endfor %}
       </div>
     {% else %}
